@@ -1,0 +1,34 @@
+
+//Ejemplos de prueba
+
+b=7
+
+a = 32.4 *(-8.6 - b)/       6.1E-8
+
+d = a ^ b // Esto es un comentario
+
+c=6.5.3
+
+d1 = 16b
+
+dato0 =  3 --5
+
+dato1 = 3
+
+-b = 8
+
+g = //
+
+h = 8.-3
+
+d2 = -3e-4f
+
+d3 == 45(/38)^3
+
+d4 = 45(*38)^3
+
+d5___3=6E-8
+
+d6=6.E-8
+
+
