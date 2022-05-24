@@ -56,6 +56,14 @@ int main()
   file<< "</head>"<<endl;
   file<< "<body>"<<endl;
 
+  file<< "<p class=\"Entero\">Entero</p>"<<endl<<"<p />"<<endl;
+  file<< "<p class=\"Flotante\">Flotante</p>"<<endl<<"<p />"<<endl;
+  file<< "<p class=\"Operador\">Operador</p>"<<endl<<"<p />"<<endl;
+  file<< "<p class=\"Identificador\">Identificador</p>"<<endl<<"<p />"<<endl;
+  file<< "<p class=\"Simbolo\">Simbolo</p>"<<endl<<"<p />"<<endl;
+  file<< "<p class=\"Comentario\">Comentario</p>"<<endl<<"<p />"<<endl;
+  file<< "<p class=\"Error\">Error</p>"<<endl<<"<p />"<<endl;
+
   int state = 0;
   bool spc = false;
   bool exp = false;
