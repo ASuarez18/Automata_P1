@@ -6,10 +6,10 @@
 using namespace std;
 
 //Case 0
-int Init(int  &state, char c){
+void Init(int  &state, int  &type, char c){
   if(isalpha(c)){
     state = 1;
-    cout<<"Variable ";
+    //temp<<"Variable ";
   }
 
   else if (c == '/'){
@@ -19,36 +19,40 @@ int Init(int  &state, char c){
   else if(c != ' '){
     state = 404;
   }
-  return state;
+  
 }
 
 // Case 1
-int VarI(int  &state, char c, bool &spc ){
+void VarI(int  &state, int  &type, char c, bool &spc ){
   if ((isdigit(c) || isalpha(c)) && !spc){
     state = 1;
   }
   else if (c == '='){
     state = 2;
     spc = false;
-    cout<<"Asignacion ";
+    //temp<<"Asignacion ";
+    type = 4;
   }
   else if(c == ' '){
     spc = true;
   }
-  return state; 
+  else{
+    state = 404;
+  }
 }
 
 // Case 2
-int Asign(int  &state, char c, int &pCnt){
+void Asign(int  &state, int  &type, char c, int &pCnt){
+  bool token = true;
   if(isdigit(c)){  
     state = 3;
   }
   else if(isalpha(c)){
     state = 5;
-    cout<<"Variable ";
   }
   else if(c == ' '){
     state=2;
+    token = false;
   }
   else if(c == '.'){
     state = 8;
@@ -59,197 +63,238 @@ int Asign(int  &state, char c, int &pCnt){
   else if (c == '('){ 
     state = 7;
     pCnt++;
-    cout << "Parentesis que abre ";
+    //temp << "Parentesis que abre ";
   }
   else {
-      state = 404;
+    state = 404;
   }
-  return state;
+  if (token){
+    type = 3;
+  }
 }
 
 // Case 3
-int Int(int &state, char c, bool &spc, int &pCnt){
-  if(c == '.'){
+void Int(int &state, int  &type, char c, bool &spc, int &pCnt, bool exp){
+  bool exp2 = exp;
+  bool token = true;
+  if(c == '.' && !exp){
     state = 4;
-    spc=false;
+    spc = false;
+    token = false;
   }
   else if(isdigit(c) && !spc){
     state = 3;
+    token = false;
   }
   else if(c == '^'){
     state = 13; 
     spc=false; 
-    cout<<"Entero " <<"Potencia ";
+    //temp1if(!exp) //temp<<"Entero " <<"Potencia ";
+    //temp1else //temp<<"Potencia ";
+    exp = false;
   }
   else if(c == '+'){
     state = 9; 
     spc=false; 
-    cout<<"Entero " <<"Suma ";
+    //temp1if(!exp) //temp<<"Entero " <<"Suma ";
+    //temp1else //temp<<"Suma ";
+    exp = false;
   }
   else if (c == '-'){
     state = 10;
     spc=false; 
-    cout<<"Entero " <<"Resta ";
+    //temp1if(!exp) //temp<<"Entero " <<"Resta ";
+    //temp1else //temp<<"Resta ";
+    exp = false;
   }
   else if (c == '*'){ 
     state = 11; 
-    spc=false; 
-    cout<<"Entero " <<"Multiplicación ";
+    spc=false;
+    //temp1 if(!exp) //temp<<"Entero " <<"Multiplicacion ";
+    //temp1 else //temp<<"Multiplicacion "; 
+    exp = false;
   }
   else if(c =='/'){
     state = 12; 
     spc=false; 
-    cout<<"Entero " <<"División ";
+    if(!exp) //temp<<"Entero ";
+    exp = false;
   }
   else if (c == ')'){
     state = 16; 
     spc=false; 
-    cout<<"Entero "<<"Paréntesis que cierra "; 
+    //temp1 if(!exp) //temp<<"Entero " <<"Parentesis que cierra ";
+    //temp1 else //temp<<"Parentesis que cierra ";
+    exp = false;
     pCnt--;
   }
-  else if (c == 'E'){ 
+  else if (c == 'E' && !exp){ 
     state = 17; 
     spc=false; 
-    cout<<"Real"<<endl;
+    //temp<<"Real ";
+    token = false;
   }
   else if (c == ' '){
-    state = 19; spc=true;
+    state = 3; 
+    spc=true;
+    token = false;
   }
   else{
     state = 404;
   }
-  return state;
+  if(token && !exp2){
+    type = 1;
+  }
+  else if(token && exp2){
+    type = 2;
+  }
 }
 
 // Case 4
-int Float(int &state, char c, bool &spc, int &pCnt){
+void Float(int &state, int  &type, char c, bool &spc, int &pCnt, bool exp){
+  bool token = true;
   if(isdigit(c) && !spc){
     state = 4;
+    token = false;
   }
   else if(c == '^'){
     state = 13; 
     spc=false; 
-    cout<<"Real " <<"Potencia ";
+    //temp1 if(!exp) //temp<<"Real " <<"Potencia ";
+    //temp1 else //temp<<"Potencia ";
+    exp = false;
   }
   else if(c == '+'){
     state = 9; 
     spc=false; 
-    cout<<"Real " <<"Suma ";
+    //temp1if(!exp) //temp<<"Real " <<"Suma ";
+    //temp1 else //temp<<"Suma ";
+    exp = false;
   }
   else if (c == '-'){
     state = 10;
     spc=false; 
-    cout<<"Real " <<"Resta ";
+    //temp1if(!exp) //temp<<"Real " <<"Resta ";
+    //temp1else //temp<<"Resta ";
+    exp = false;
   }
   else if (c == '*'){ 
     state = 11; 
     spc=false; 
-    cout<<"Real " <<"Multiplicación ";
+    //temp1 if(!exp) //temp<<"Real " <<"Multiplicacion ";
+    //temp1 else //temp<<"Multiplicacion ";
+    exp = false;
   }
   else if(c == '/'){
     state = 12; 
     spc=false; 
-    cout<<"Real " <<"División ";
+    if(!exp) //temp<<"Real ";
+    exp = false;
   }
   else if (c == ')'){
     state = 16; 
     spc=false; 
-    cout<<"Real "<<"Paréntesis que cierra "; 
+    //temp1 if(!exp) //temp<<"Real "<<"Parentesis que cierra "; 
+    //temp1 else //temp<<"Parentesis que cierra ";
+    exp = false;
     pCnt--;
   }
-  else if (c == 'E'){ 
+  else if (c == 'E' && !exp){ 
     state = 17; 
     spc=false; 
-    cout<<"Real "<<endl;
+    //temp<<"Real ";
+    token = false;
   }
   else if (c == ' '){
-    state = 19; spc=true;
+    state = 4; 
+    spc=true;
+    token = false;
   }
   else{
     state = 404;
   }
-  return state;
+  if(token){
+    type = 2;
+  }
 }
 
 // Case 5
-int Var(int &state, char c, bool &spc, int &pCnt){
+void Var(int &state, int  &type, char c, bool &spc, int &pCnt){
+  bool token = true;
   if(isdigit(c) && !spc){
     state = 5;
+    token = false;
   }
   else if(isalpha(c) && !spc){
     state = 5;
+    token = false;
   }
   else if(c == '^'){
     state = 13; 
     spc=false; 
-    cout<<"Variable" <<"Potencia ";
+    //temp<<"Variable " <<"Potencia ";
   }
   else if(c == '+'){
     state = 9; 
     spc=false; 
-    cout<<"Variable " <<"Suma ";
+    //temp<<"Variable " <<"Suma ";
   }
   else if (c == '-'){
     state = 10;
     spc=false; 
-    cout<<"Variable " <<"Resta ";
+    //temp<<"Variable " <<"Resta ";
   }
   else if (c == '*'){ 
     state = 11; 
     spc=false; 
-    cout<<"Variable " <<"Multiplicación ";
+    //temp<<"Variable " <<"Multiplicacion ";
   }
   else if(c == '/'){
     state = 12; 
     spc=false; 
-    cout<<"Variable " <<"División ";
+    //temp<<"Variable ";
   }
   else if (c == ')'){
     state = 16; 
     spc=false; 
-    cout<<"Variable "<<"Paréntesis que cierra "; 
+    //temp<<"Variable "<<"Parentesis que cierra "; 
     pCnt--;
   }
-  else if (c == 'E'){ 
-    state = 17; 
-    spc=false; 
-    cout<<"Variable "<<endl;
-  }
   else if (c == ' '){
-    state = 19; 
+    state = 5; 
     spc=true;
+    token = false;
   }
   else{
     state = 404;
   }
-  return state;
+  if(token){
+    type = 4;
+  }
 }
 
 // Case 6
-int Neg(int &state, char c, int &pCnt){
+void Neg(int &state, char c, int &pCnt, bool exp){
   if(isdigit(c)){
     state = 3;
   }
-  else if(isalpha(c)){
+  else if(isalpha(c) && !exp){
     state = 5;
   }
-  else if(c == '.') {
+  else if(c == '.' && !exp) {
     state = 8;
   }
-  else if (c == ' '){
+  else if (c == ' ' && !exp){
     state = 10;
   }
   else{
-    switch(state){
-      default: state = 404; break;
-    }
+    state = 404;
   }
-  return state;
 }
 
 // Case 7
-int ParA(int &state, char c, int &pCnt){
-  
+void ParA(int &state, int  &type, char c, int &pCnt){
+  bool token = true;
   if(isdigit(c)){
     state = 3;
   }
@@ -258,40 +303,43 @@ int ParA(int &state, char c, int &pCnt){
   } 
   else if(c == ' '){
     state=7;
+    token = false;
   }
   else if(c == '.'){
     state = 8;
-    return state;
+    
   }
   else if (c == '-'){
     state = 6;
-    return state;
+    
   }
   else if (c == '('){ 
     state = 7;
     pCnt++;
-    cout << "Parentesis que abre ";
-    return state;
+    //temp << "Parentesis que abre ";
+    
   }
   else{
     state = 404;
   }
-  return state;
+  if(token){
+    type = 5;
+  }
 }
 
 // Case 8
-int Pnt(int &state, char c ){
+void Pnt(int &state, char c ){
   if(isdigit(c)){
     state = 4;
   }
   else{
     state = 404;
   }
-  return state;
 }
 
 // Case 9
-int Sum(int &state, char c, int &pCnt){
+void Sum(int &state, int  &type, char c, int &pCnt){
+  bool token = true;
   if(isdigit(c)){
     state = 3;
   }
@@ -306,18 +354,24 @@ int Sum(int &state, char c, int &pCnt){
   }
   else if(c == '('){
     state = 7;
+    pCnt++;
+    //temp<<"Parentesis que abre";
   }
   else if(c == ' '){
     state = 9;
+    token = false;
   }
   else{
     state = 404;
   }
-  return state;
+  if(token){
+    type = 3;
+  }
 }
 
 // Case 10
-int Res(int &state, char c, int &pCnt){
+void Res(int &state, int  &type, char c, int &pCnt){
+  bool token = true;
   if(isdigit(c)){
     state = 3;
   }
@@ -333,19 +387,23 @@ int Res(int &state, char c, int &pCnt){
   else if(c == '('){
     state = 7;
     pCnt++;
-    cout<<"Paréntesis que abre ";
+    //temp<<"Parentesis que abre ";
   }
   else if (c == ' '){
     state = 10;
+    token = false;
   }
   else{
     state = 404;
   }
-  return state;
+  if(token){
+    type = 3;
+  }
 }
 
 // Case 11
-int Mult(int &state, char c, int &pCnt){
+void Mult(int &state, int  &type, char c, int &pCnt){
+  bool token = true;
   if(isdigit(c)){
     state = 3;
   }
@@ -361,45 +419,63 @@ int Mult(int &state, char c, int &pCnt){
   else if(c == '('){
     state = 7;
     pCnt++;
-    cout<<"Paréntesis que abre ";
+    //temp<<"Parentesis que abre ";
   }
   else if (c == ' '){
     state = 11;
+    token = false;
   }
   else{
     state = 404;
   }
-  return state;
+  if(token){
+    type = 3;
+  }
 }
 
 // Case 12
-int Div(int &state, char c, int &pCnt){
+void Div(int &state, int  &type, char c, int &pCnt){
+  bool token = true;
   if(isdigit(c)){
     state = 3;
+    //temp<<"Division ";
   }
   else if(isalpha(c)){
     state = 5;
+    //temp<<"Division ";
   }
   else if(c == '.') {
     state = 8;
+    //temp<<"Division ";
   }
   else if(c == '-') {
     state = 6;
+    //temp<<"Division ";
   }
   else if(c == '(') {
     state = 7;
+    //temp<<"Division ";
   }
   else if(c == ' ') {
     state = 12;
+    token = false;
+  }
+  else if(c == '/'){
+    state = 15;
+    //temp<<"Comentario ";
+    token = false;
   }
   else{
     state = 404;
   }
-  return state;
+  if(token){
+    type = 3;
+  }
 }
 
 // Case 13
-int Pot(int &state, char c, int &pCnt){
+void Pot(int &state, int  &type, char c, int &pCnt){
+  bool token = true;
   if(isdigit(c)){
     state = 3;
   }
@@ -415,78 +491,83 @@ int Pot(int &state, char c, int &pCnt){
   else if(c == '(') {
     state = 7;
     pCnt++;
-    cout<<"Paréntesis que abre ";
+    //temp<<"Parentesis que abre ";
   }
   else if(c == ' ') {
     state = 13;
+    token = false;
   }
   else{
     state = 404;
   }
-  return state;
+  if(token){
+    type = 3;
+  }
 }
 
 // Case 14
-int CommI(int &state, char c ){
+void CommI(int &state, char c ){
   if(c == '/'){
     state = 15;
-    cout<<"Comentario "; 
+    //temp<<"Comentario "; 
   }
   else{
     state = 404;
   }
-  return state;
 }
 
 // Case 15
-int Comm(int &state, char c ){
-  state = 15; // Inecesario pero por si acaso
-  return state;
+void Comm(int &state, char c ){
+  state = 15; // Innecesario pero por si acaso
 }
 
 // Case 16
-int ParC(int &state, char c, int &pCnt){
+void ParC(int &state, int  &type, char c, int &pCnt){
+  bool token = true;
   if (c == '^'){
     state = 13;
-    cout << "Potencia ";
+    //temp << "Potencia ";
   }
   else if (c == '*'){
     state = 11;
-    cout << "Multiplicación ";
+    //temp << "Multiplicacion ";
   }
   else if (c == '/'){
     state = 12;
-    cout << "División ";
   }
   else if (c == '+'){
     state = 9;
-    cout << "Suma ";
+    //temp << "Suma ";
   }
   else if (c == '-'){
     state = 10;
-    cout << "Resta ";
+    //temp << "Resta ";
   }
   else if (c == ')'){
     state = 16;
     pCnt--;
-    cout << "Paréntesis que cierra ";
+    //temp << "Parentesis que cierra ";
   }
   else if (c == 'E'){
     state = 17;
-    cout << "Real ";
+    //temp << "Real ";
   }
   else if (c == ' '){
     state = 16;
-    cout << "Paréntesis que cierra ";
+    //temp << "Parentesis que cierra ";
+    token = false;
   }
   else{
     state = 404;
   }
-  return state;
+  if(token){
+    type = 5;
+  }
 }
 
 // Case 17
-int Exp(int &state, char c ){ 
+void Exp(int &state, char c, bool &exp){
+  exp = true;
   if (isdigit(c)){
     state = 3;
   }
@@ -496,28 +577,4 @@ int Exp(int &state, char c ){
   else{
     state = 404;
   }
-  return state;
 }
-
-// // Case 18
-// int SI(int &state, char c ){
-//   switch(state){
-//     case '=': state = 2; break;
-//     case ' ': state = 18; break;
-//     default: state = 404; break;
-//   }
-// }
-
-// // Case 19
-// int SMed(int &state, char c, int &pCnt){
-//   switch(state){
-//     case '^': state = 13; break;
-//     case '+': state = 9; break;
-//     case '-': state = 10; break;
-//     case '*': state = 11; break;
-//     case '/': state = 12; break;
-//     case ')': state = 16; pCnt++; break;
-//     case ' ': state = 19; break;
-//     default: state = 404; break;
-//   }
-// }

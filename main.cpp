@@ -7,8 +7,6 @@
 #include <string>
 #include "functions.cpp"
 
-// https://prod.liveshare.vsengsaas.visualstudio.com/join?61068C5AD74BC64CC84B23E6DF985B769333
-
 using namespace std;
 
 
@@ -36,51 +34,122 @@ int main()
   }
 
   input_file.close();
+
+  //Crear archivo HTML
+  //Insertar inicio de archivo <div>
+  ofstream file;
+  file.open("Output.html");
+  file<< "<!DOCTYPE html>"<<endl;
+  file<< "<html>"<<endl;
+  file<< "<head>"<<endl;
+  file<< "<style>"<<endl;
+  file<< "body {background-color: #262626;}"<<endl;
+  file<< ".Entero {color: orange; display: inline;}"<<endl;
+  file<< ".Flotante {color: #d330e6; display: inline;}"<<endl;
+  file<< ".Operador {color: #00f7ff; display: inline;}"<<endl;
+  file<< ".Identificador {color: yellow; display: inline;}"<<endl;
+  file<< ".Simbolo {color: #97ff5e; display: inline;}"<<endl;
+  file<< ".Comentario {color: #adadad; display: inline;}"<<endl;
+  file<< ".Error {color: red; display: inline;}"<<endl;
+
+  file<< "</style>"<<endl;
+  file<< "</head>"<<endl;
+  file<< "<body>"<<endl;
+
   int state = 0;
   bool spc = false;
   bool err = false;
+  bool exp = false;
   int pCnt = 0;
+  int type = 0;
+  string vari = "";
+  bool del = false;
   for (int n=0;n<lines.size();n++){
+    cout<<n+1<<" ";
     for (int m=0;m<lines[n].size();m++){
+      if(err) continue;
+      if(pCnt < 0) state=404;
+      type = 0;
       switch (state)
       {
-        case 0: state=Init(state,lines[n][m]); break;
-        case 1: state=VarI(state,lines[n][m],spc); break;
-        case 2: state=Asign(state,lines[n][m], pCnt); break;
-        case 3: state=Int(state,lines[n][m],spc, pCnt); break;
-        case 4: state=Float(state,lines[n][m],spc, pCnt); break;
-        case 5: state=Var(state,lines[n][m],spc, pCnt); break;
-        case 6: state=Neg(state,lines[n][m], pCnt); break;
-        case 7: state=ParA(state,lines[n][m], pCnt); break;
-        case 8: state=Pnt(state,lines[n][m]); break;
-        case 9: state=Sum(state,lines[n][m], pCnt); break;
-        case 10: state=Res(state,lines[n][m], pCnt); break;
-        case 11: state=Mult(state,lines[n][m], pCnt); break;
-        case 12: state=Div(state,lines[n][m], pCnt); break;
-        case 13: state=Pot(state,lines[n][m], pCnt); break;
-        case 14: state=CommI(state,lines[n][m]); break;
-        case 15: state=Comm(state,lines[n][m]); break;
-        case 16: state=ParC(state,lines[n][m], pCnt); break;
-        case 17: state=Exp(state,lines[n][m]); break;
+        case 0: Init(state,type,lines[n][m]); break;
+        case 1: VarI(state,type,lines[n][m],spc); break;
+        case 2: Asign(state,type,lines[n][m], pCnt); break;
+        case 3: Int(state,type,lines[n][m],spc, pCnt, exp); break;
+        case 4: Float(state,type,lines[n][m],spc, pCnt, exp); break;
+        case 5: Var(state,type,lines[n][m],spc, pCnt); break;
+        case 6: Neg(state,lines[n][m], pCnt, exp); break;
+        case 7: ParA(state,type,lines[n][m], pCnt); break;
+        case 8: Pnt(state,lines[n][m]); break;
+        case 9: Sum(state,type,lines[n][m], pCnt); break;
+        case 10: Res(state,type,lines[n][m], pCnt); break;
+        case 11: Mult(state,type,lines[n][m], pCnt); break;
+        case 12: Div(state,type,lines[n][m], pCnt); break;
+        case 13: Pot(state,type,lines[n][m], pCnt); break;
+        case 14: CommI(state,lines[n][m]); break;
+        case 15: Comm(state,lines[n][m]); break;
+        case 16: ParC(state,type, lines[n][m], pCnt); break;
+        case 17: Exp(state,lines[n][m],exp); break;
         case 404: cout<<"Error en la linea "<<n+1<<" en el caracter "<<m+1<<endl; err=true; break; 
       } //Switch
-    } //For 2
-    if(err) break;
-      //For 1
+      if (type != 0){
+        
+        del = true;
+        switch (type)
+        {
+          case 1: cout<<" Entero "; file<< "<p class=\"Entero\">"; break;
+          case 2: cout<<" Flotante "; file<< "<p class=\"Flotante\">"; break;
+          case 3: cout<<" Operador "; file<< "<p class=\"Operador\">"; break;
+          case 4: cout<<" Identificador "; file<< "<p class=\"Identificador\">"; break;
+          case 5: cout<<" Simbolo "; file<< "<p class=\"Simbolo\">"; break;
+          case 6: cout<<" Comentario "; file<< "<p class=\"Comentario\">"; break;
+        }
+        cout<<vari;
+        file<<vari;
+        file<< "</p>"<<endl;
+        vari = "";
+      }
+      vari += lines[n][m];
+    } 
     if(err){
-      cout<<endl;
       state=0;
       err=false;
+      spc=false;
+      exp=false;
+      pCnt=0;
       continue;
-    } 
+    }
+    if(pCnt != 0){
+      cout<<"Error en conteo de parentesis en la linea "<<n+1<<endl;
+      state=0;
+      err=false;
+      spc=false;
+      exp=false;
+      pCnt=0;
+      continue;
+    }
     switch (state)
     {
-      case 3: cout<<"Entero "; break;
-      case 4: cout<<"Real "; break;
+      case 3: if(!exp) cout<<" Entero "<<vari; file<< "<p class=\"Entero\">"; file<<vari; file<<"</p>"<<endl; break;
+      case 4: if(!exp) cout<<" Flotante "<<vari; file<< "<p class=\"Flotante\">"; file<<vari; file<< "</p>"<<endl;break;
+      case 5: cout<<" Identificador "<<vari; file<< "<p class=\"Identificador\">"; file<<vari; file<< "</p>"<<endl;break;
+      case 0: cout<<""; break;
+      case 15: cout<<" Comentario "<<vari; file<< "<p class=\"Comentario\">"; file<<vari; file<< "</p>"<<endl;break;
+      case 16: cout<<" Simbolo "<<vari; file<< "<p class=\"Simbolo\">"; file<<vari; file<< "</p>"<<endl;break;
+      default: cout<<" Error al final de la linea "<<vari<<n+1; file<<"<p class=\"Error\">"; file<<vari; break;
     }
     cout<<endl;
+    spc=false;
+    exp=false;
+    pCnt=0;
     state=0;
+    vari="";
+    // un p aqui
+    file << "<br>";
   }
+
+file<< "</body>"<<endl;
+file<< "</html>"<<endl;
 return EXIT_SUCCESS;
 
 }
