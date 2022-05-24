@@ -58,7 +58,6 @@ int main()
 
   int state = 0;
   bool spc = false;
-  bool err = false;
   bool exp = false;
   int pCnt = 0;
   int type = 0;
@@ -67,7 +66,6 @@ int main()
   for (int n=0;n<lines.size();n++){
     cout<<n+1<<" ";
     for (int m=0;m<lines[n].size();m++){
-      if(err) continue;
       if(pCnt < 0) state=404;
       type = 0;
       switch (state)
@@ -90,7 +88,7 @@ int main()
         case 15: Comm(state,lines[n][m]); break;
         case 16: ParC(state,type, lines[n][m], pCnt); break;
         case 17: Exp(state,lines[n][m],exp); break;
-        case 404: cout<<"Error en la linea "<<n+1<<" en el caracter "<<m+1<<endl; err=true; break; 
+        case 404: break;
       } //Switch
       if (type != 0){
         
@@ -111,26 +109,12 @@ int main()
       }
       vari += lines[n][m];
     } 
-    if(err){
-      state=0;
-      err=false;
-      spc=false;
-      exp=false;
-      pCnt=0;
-      continue;
-    }
     if(pCnt != 0){
-      cout<<"Error en conteo de parentesis en la linea "<<n+1<<endl;
-      state=0;
-      err=false;
-      spc=false;
-      exp=false;
-      pCnt=0;
-      continue;
+      state = 404;
     }
     switch (state)
     {
-      case 3: if(!exp) cout<<" Entero "<<vari; file<< "<p class=\"Entero\">"; file<<vari; file<<"</p>"<<endl; break;
+      case 3: if(!exp){ cout<<" Entero "<<vari; file<< "<p class=\"Entero\">"; file<<vari; file<<"</p>"<<endl; break;} else{cout<<" Flotante "<<vari; file<< "<p class=\"Flotante\">"; file<<vari; file<< "</p>"<<endl;break;}
       case 4: if(!exp) cout<<" Flotante "<<vari; file<< "<p class=\"Flotante\">"; file<<vari; file<< "</p>"<<endl;break;
       case 5: cout<<" Identificador "<<vari; file<< "<p class=\"Identificador\">"; file<<vari; file<< "</p>"<<endl;break;
       case 0: cout<<""; break;
@@ -144,7 +128,6 @@ int main()
     pCnt=0;
     state=0;
     vari="";
-    // un p aqui
     file << "<br>";
   }
 
