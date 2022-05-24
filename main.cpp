@@ -128,7 +128,7 @@ int main()
     pCnt=0;
     state=0;
     vari="";
-    file << "<br>";
+    file << "<p/>";
   }
 
 file<< "</body>"<<endl;
