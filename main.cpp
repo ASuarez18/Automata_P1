@@ -128,11 +128,12 @@ int main()
     pCnt=0;
     state=0;
     vari="";
-    file << "<p/>";
+    file << "<p/>"; 
   }
 
 file<< "</body>"<<endl;
 file<< "</html>"<<endl;
+file.close();
 return EXIT_SUCCESS;
 
 }
