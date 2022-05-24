@@ -5,6 +5,7 @@
 #include <ctype.h>
 #include <typeinfo>
 #include <string>
+#include <chrono>
 #include "functions.cpp"
 
 using namespace std;
@@ -34,6 +35,8 @@ int main()
   }
 
   input_file.close();
+
+  auto start = chrono::high_resolution_clock::now();
 
   //Crear archivo HTML
   //Insertar inicio de archivo <div>
@@ -142,6 +145,7 @@ int main()
 file<< "</body>"<<endl;
 file<< "</html>"<<endl;
 file.close();
+auto end = chrono::high_resolution_clock::now();
+cout << "Tiempo de ejecucion: " << chrono::duration_cast<chrono::milliseconds>(end - start).count() << " ms" << endl;
 return EXIT_SUCCESS;
-
 }
